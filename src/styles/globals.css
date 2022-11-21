@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .body {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 100%;
+    min-height: 100vh;
+  }
+  .inner {
+    @apply mx-auto w-full max-w-screen-lg px-5 md:px-20;
+  }
+  .inner--main {
+    @apply mx-auto w-full max-w-screen-lg px-5 py-20 md:px-20;
+  }
+}
