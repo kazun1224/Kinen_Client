@@ -5,7 +5,7 @@ import { NextRouter, useRouter } from 'next/router'
 
 export const useQueryCigarettes = () => {
   const router = useRouter()
-  const getCigarette = async () => {
+  const getCigarettes = async () => {
     const { data } = await axios.get<Cigarette[]>(
       `${process.env.NEXT_PUBLIC_API_URL}/cigarette`
     )
@@ -13,7 +13,7 @@ export const useQueryCigarettes = () => {
   }
   return useQuery<Cigarette[]>({
     queryKey: ['cigarettes'],
-    queryFn: getCigarette,
+    queryFn: getCigarettes,
     onError: (err: any) => {
       if (err.response.status === 401 || err.response.status === 403)
         router.push('/')
@@ -21,10 +21,23 @@ export const useQueryCigarettes = () => {
   })
 }
 
+export const useQueryCigaretteById = ( cigaretteId:any) => {
 
-export const getCigarette = async (router: NextRouter) => {
-  const { data } = await axios.get<Cigarette>(
-    `${process.env.NEXT_PUBLIC_API_URL}/cigarette/${router.query.id}`
-  )
-  return data
+
+  const router = useRouter()
+
+  const getCigarette = async () => {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/cigarette/${cigaretteId}`
+    )
+    return data
+  }
+  return useQuery<Cigarette>({
+    queryKey: ['cigarettes', cigaretteId],
+    queryFn: getCigarette,
+    onError: (err: any) => {
+      if (err.response.status === 401 || err.response.status === 403)
+        router.push('/main')
+    },
+  })
 }
