@@ -12,24 +12,24 @@ model Cigarette {
   createdAt         DateTime @default(now())
   updatedAt         DateTime
   name              String
-  amount            Int
+  amount            String
   userId            Int
-  numberOfCigarette Int
-  tar               Int?
+  numberOfCigarette String
+  tar               String?
   User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Text {
   id     Int    @id @default(autoincrement())
   text   String
-  amount Int
+  amount String
 }
 
 model Total {
-  id          Int  @id @default(autoincrement())
-  totalAmount Int
+  id          Int    @id @default(autoincrement())
+  totalAmount String
   userId      Int
-  User        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
