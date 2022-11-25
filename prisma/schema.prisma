@@ -17,6 +17,7 @@ model Cigarette {
   numberOfCigarette String
   tar               String?
   User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Carton            Carton[]
 }
 
 model Text {
@@ -26,10 +27,12 @@ model Text {
 }
 
 model Total {
-  id          Int    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   totalAmount String
   userId      Int
-  User        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -41,4 +44,12 @@ model User {
   nickName       String?
   Cigarette      Cigarette[]
   Total          Total[]
+}
+
+model Carton {
+  id          Int       @id @default(autoincrement())
+  boxes       String
+  amount      String
+  cigaretteId Int
+  Cigarette   Cigarette @relation(fields: [cigaretteId], references: [id], onDelete: Cascade)
 }
