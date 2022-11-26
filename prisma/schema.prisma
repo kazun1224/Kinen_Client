@@ -17,7 +17,7 @@ model Cigarette {
   numberOfCigarette String
   tar               String?
   User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Carton            Carton[]
+  Carton            Carton?
 }
 
 model Text {
@@ -47,9 +47,9 @@ model User {
 }
 
 model Carton {
-  id          Int       @id @default(autoincrement())
-  boxes       String
-  amount      String
-  cigaretteId Int
-  Cigarette   Cigarette @relation(fields: [cigaretteId], references: [id], onDelete: Cascade)
+  id           Int       @id @default(autoincrement())
+  boxes        String
+  cigaretteId  Int       @unique
+  cartonAmount String
+  Cigarette    Cigarette @relation(fields: [cigaretteId], references: [id], onDelete: Cascade)
 }
