@@ -1,3 +1,4 @@
+import { Total } from '@prisma/client'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -6,11 +7,11 @@ export const useQueryTotal = () => {
   const router = useRouter()
 
   const getTotal = async () => {
-    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/total`)
+    const { data } = await axios.get<Total>(`${process.env.NEXT_PUBLIC_API_URL}/total`)
     return data
   }
 
-  return useQuery({
+  return useQuery<Total>({
     queryKey: ['total'],
     queryFn: getTotal,
     onError: (err: any) => {
