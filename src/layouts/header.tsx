@@ -6,11 +6,6 @@ import {
   HoverCard,
   Group,
   Button,
-  UnstyledButton,
-  Text,
-  SimpleGrid,
-  ThemeIcon,
-  Anchor,
   Divider,
   Center,
   Box,
@@ -18,10 +13,13 @@ import {
   Drawer,
   Collapse,
   ScrollArea,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+} from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 
-import { SmokingNo } from 'tabler-icons-react';
+import { SmokingNo } from 'tabler-icons-react'
+import Link from 'next/link'
+import axios from 'axios'
+import { useRouter } from 'next/router'
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -43,7 +41,10 @@ const useStyles = createStyles((theme) => ({
     },
 
     ...theme.fn.hover({
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
     }),
   },
 
@@ -53,14 +54,20 @@ const useStyles = createStyles((theme) => ({
     borderRadius: theme.radius.md,
 
     ...theme.fn.hover({
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[7]
+          : theme.colors.gray[0],
     }),
 
     '&:active': theme.activeStyles,
   },
 
   dropdownFooter: {
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
+    backgroundColor:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[7]
+        : theme.colors.gray[0],
     margin: -theme.spacing.md,
     marginTop: theme.spacing.sm,
     padding: `${theme.spacing.md}px ${theme.spacing.md * 2}px`,
@@ -81,40 +88,47 @@ const useStyles = createStyles((theme) => ({
       display: 'none',
     },
   },
-}));
+}))
 
+export const HeaderComponent = () => {
+  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
+    useDisclosure(false)
+  const { classes, theme } = useStyles()
+  const router = useRouter()
 
-export function HeaderComponent() {
-  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-  const { classes, theme } = useStyles();
-
-
+  const logout = async () => {
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`)
+    router.push('/')
+  }
 
   return (
-    <Box pb={120}>
-      <Header height={60} px="md">
-        <Group position="apart" sx={{ height: '100%' }}>
+    <Box >
+      <Header height={60} px="md" >
+        <Group position="apart"  className="inner h-full" >
           <SmokingNo size={30} />
 
-          <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
-            <a href="#" className={classes.link}>
+          <Group
+            sx={{ height: '100%' }}
+            spacing={0}
+            className={classes.hiddenMobile}
+          >
+            <Link href="/main" className={classes.link}>
               Home
-            </a>
-
-            <a href="#" className={classes.link}>
-              Learn
-            </a>
-            <a href="#" className={classes.link}>
-              Academy
-            </a>
+            </Link>
+            <Link href="/user" className={classes.link}>
+              User
+            </Link>
           </Group>
 
           <Group className={classes.hiddenMobile}>
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
+            <Button onClick={logout}>logout</Button>
           </Group>
 
-          <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} />
+          <Burger
+            opened={drawerOpened}
+            onClick={toggleDrawer}
+            className={classes.hiddenDesktop}
+          />
         </Group>
       </Header>
 
@@ -128,27 +142,28 @@ export function HeaderComponent() {
         zIndex={1000000}
       >
         <ScrollArea sx={{ height: 'calc(100vh - 60px)' }} mx="-md">
-          <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
+          <Divider
+            my="sm"
+            color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
+          />
 
-          <a href="#" className={classes.link}>
+          <Link href="/main" className={classes.link}>
             Home
-          </a>
+          </Link>
+          <Link href="/user" className={classes.link}>
+            User
+          </Link>
 
-          <a href="#" className={classes.link}>
-            Learn
-          </a>
-          <a href="#" className={classes.link}>
-            Academy
-          </a>
-
-          <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
+          <Divider
+            my="sm"
+            color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
+          />
 
           <Group position="center" grow pb="xl" px="md">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
+            <Button onClick={logout}>logout</Button>
           </Group>
         </ScrollArea>
       </Drawer>
     </Box>
-  );
+  )
 }
