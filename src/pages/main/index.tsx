@@ -1,25 +1,15 @@
-import { Button } from '@mantine/core'
-import axios from 'axios'
 import { CustomNextPage } from 'next'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Layout } from 'src/layouts'
-import { useQueryClient } from '@tanstack/react-query'
 
 const Main: CustomNextPage = () => {
   const router = useRouter()
-
-  const logout = async () => {
-    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`)
-    router.push('/')
-  }
 
   return (
     <div>
       <ProgressCard />
       <CigaretteItem />
-
-      <Button onClick={logout}>logout</Button>
     </div>
   )
 }
@@ -27,33 +17,68 @@ const Main: CustomNextPage = () => {
 Main.getLayout = (page) => <Layout>{page}</Layout>
 export default Main
 
-import { Text, Progress, Card } from '@mantine/core'
-export function ProgressCard() {
+import { Text, Progress, Card, Skeleton } from '@mantine/core'
+export const ProgressCard = () => {
+  const { data: total, status } = useQueryTotal()
+  console.log(total)
+
+  if (status === 'loading') {
+    return (
+      <div className="py-20">
+        <Skeleton visible={true}>
+          <Card
+            withBorder
+            radius="md"
+            p="xl"
+            sx={(theme) => ({
+              backgroundColor:
+                theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+            })}
+          >
+          </Card>
+        </Skeleton>
+      </div>
+    )
+  }
+
+  if (status === 'error') {
+    return <Text>データの取得に失敗しました。</Text>
+  }
   return (
-    <Card
-      withBorder
-      radius="md"
-      p="xl"
-      sx={(theme) => ({
-        backgroundColor:
-          theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-      })}
-    >
-      <Text size="xs" transform="uppercase" weight={700} color="dimmed">
-        Monthly goal
-      </Text>
-      <Text size="lg" weight={500}>
-        $5.431 / $10.000
-      </Text>
-      <Progress value={54.31} mt="md" size="lg" radius="xl" />
-    </Card>
+    <div className="py-20">
+        <Card
+          withBorder
+          radius="md"
+          p="xl"
+          sx={(theme) => ({
+            backgroundColor:
+              theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+          })}
+        >
+          <Text size="xs" transform="uppercase" weight={700} color="dimmed">
+            今までに使用した金額
+          </Text>
+          <Text size="lg" weight={500}>
+            {total?.totalAmount}円
+          </Text>
+          <Progress
+            value={Number(total?.totalAmount)}
+            mt="md"
+            size="lg"
+            radius="xl"
+          />
+        </Card>
+    </div>
   )
 }
 
 import { Paper } from '@mantine/core'
 import { useQueryCigarettes } from 'src/hooks/useQueryCigarettes'
+import Link from 'next/link'
+import { log } from 'console'
+import { useQueryTotal } from 'src/hooks/useQueryTotal'
 
-function CigaretteItem() {
+export const CigaretteItem = () => {
   const { data: cigarettes, status } = useQueryCigarettes()
   // console.log(cigarettes);
 
@@ -66,15 +91,21 @@ function CigaretteItem() {
   }
 
   return (
-    <>
+    <div className="p-5">
       {cigarettes.map((cigarette) => {
         return (
-          <Paper shadow="md" p="md" withBorder key={cigarette.id}>
-            <Text>{cigarette.name}</Text>
-            <Text>{cigarette.amount}</Text>
-          </Paper>
+          <Link
+            href={`/cigarette/${cigarette.id}`}
+            key={cigarette.id}
+            className="mb-10  block last:mb-0"
+          >
+            <Paper withBorder className="p-5 ">
+              <Text>{cigarette.name}</Text>
+              <Text>{cigarette.amount}</Text>
+            </Paper>
+          </Link>
         )
       })}
-    </>
+    </div>
   )
 }
