@@ -11,7 +11,7 @@ export const Layout: CustomLayout = (props) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HeaderComponent/>
-      <main className="py-20 md:py-32">{props.children}</main>
+      <main className="py-20 md:py-32 inner h-full">{props.children}</main>
       <FooterComponent/>
     </>
   );
