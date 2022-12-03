@@ -1,6 +1,6 @@
 import { CustomNextPage } from 'next'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { ComponentProps, useEffect, useState } from 'react'
 import { Layout } from 'src/layouts'
 
 const Main: CustomNextPage = () => {
@@ -17,10 +17,10 @@ const Main: CustomNextPage = () => {
 Main.getLayout = (page) => <Layout>{page}</Layout>
 export default Main
 
-import { Text, Progress, Card, Skeleton } from '@mantine/core'
+import { Text, Progress, Card, Skeleton, Button } from '@mantine/core'
 export const ProgressCard = () => {
   const { data: total, status } = useQueryTotal()
-  console.log(total)
+  // console.log(total)
 
   if (status === 'loading') {
     return (
@@ -75,12 +75,21 @@ export const ProgressCard = () => {
 import { Paper } from '@mantine/core'
 import { useQueryCigarettes } from 'src/hooks/useQueryCigarettes'
 import Link from 'next/link'
-import { log } from 'console'
+import { error, log } from 'console'
 import { useQueryTotal } from 'src/hooks/useQueryTotal'
+import { useMutateTotal } from 'src/hooks/useMutateTotal'
 
 export const CigaretteItem = () => {
   const { data: cigarettes, status } = useQueryCigarettes()
   // console.log(cigarettes);
+  const {updateTotalMutation}=useMutateTotal()
+
+  const calcCigarette:ComponentProps<"form">["onSubmit"] = (e):void => {
+    e.preventDefault()
+    const cigaretteId= e.currentTarget.cigaretteId.value
+    updateTotalMutation.mutate(cigaretteId
+    )
+  }
 
   if (status === 'loading') {
     return <Text>Loading...</Text>
@@ -94,9 +103,10 @@ export const CigaretteItem = () => {
     <div className="p-5">
       {cigarettes.map((cigarette) => {
         return (
+          <div  key={cigarette.id}>
           <Link
             href={`/cigarette/${cigarette.id}`}
-            key={cigarette.id}
+
             className="mb-10  block last:mb-0"
           >
             <Paper withBorder className="p-5 ">
@@ -104,6 +114,11 @@ export const CigaretteItem = () => {
               <Text>{cigarette.amount}</Text>
             </Paper>
           </Link>
+          <form onSubmit={calcCigarette}>
+
+            <button name="cigaretteId" value={cigarette.id}>一箱</button>
+          </form>
+          </div>
         )
       })}
     </div>
