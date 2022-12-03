@@ -8,23 +8,18 @@ export const useMutateTotal = () => {
   const router = useRouter()
 
   const updateTotalMutation = useMutation(
-    async (cigaretteId: string) => {
+    async (cigaretteId: number) => {
       const res = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/total/cigarette`,
-        cigaretteId
+        {cigaretteId}
       )
       return res.data
     },
     {
       onSuccess: (res) => {
-        const previousTotal = queryClient.getQueryData<Total>([
-          'total',
-        ])
+        const previousTotal = queryClient.getQueryData<Total>(['total'])
         if (previousTotal) {
-          queryClient.setQueryData(
-            ['total'],
-            res
-          )
+          queryClient.setQueryData(['total'], res)
         }
       },
       onError: (err: any) => {
@@ -35,6 +30,5 @@ export const useMutateTotal = () => {
     }
   )
 
-  return updateTotalMutation;
+  return { updateTotalMutation }
 }
-
