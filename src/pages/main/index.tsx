@@ -82,12 +82,18 @@ import { useMutateTotal } from 'src/hooks/useMutateTotal'
 export const CigaretteItem = () => {
   const { data: cigarettes, status } = useQueryCigarettes()
   // console.log(cigarettes);
-  const {updateTotalMutation}=useMutateTotal()
+  const {updateTotalMutationByCigarette, updateTotalMutationByCarton}=useMutateTotal()
 
   const calcCigarette:ComponentProps<"form">["onSubmit"] = (e):void => {
     e.preventDefault()
     const cigaretteId= e.currentTarget.cigaretteId.value
-    updateTotalMutation.mutate(cigaretteId
+    updateTotalMutationByCigarette.mutate(cigaretteId
+    )
+  }
+  const calcCarton:ComponentProps<"form">["onSubmit"] = (e):void => {
+    e.preventDefault()
+    const cigaretteId= e.currentTarget.cigaretteId.value
+    updateTotalMutationByCarton.mutate(cigaretteId
     )
   }
 
@@ -117,6 +123,10 @@ export const CigaretteItem = () => {
           <form onSubmit={calcCigarette}>
 
             <button name="cigaretteId" value={cigarette.id}>一箱</button>
+          </form>
+          <form onSubmit={calcCarton}>
+
+            <button name="cigaretteId" value={cigarette.id}>カートン</button>
           </form>
           </div>
         )
